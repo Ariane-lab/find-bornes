@@ -1,0 +1,30 @@
+name: Run find-bornes PowerShell
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create output dir
+        run: mkdir -p out
+
+      - name: Run PowerShell script
+        # GitHub ubuntu runners include PowerShell as 'pwsh'
+        run: |
+          pwsh -NoProfile -NonInteractive ./find-bornes.ps1 `
+            -MonumentsCsv monuments.csv `
+            -IrveCsv irve.csv `
+            -OutCsv out/bornes_50kW_dans_500m.csv `
+            -OutHtml out/carte_monuments_x_bornes.html
+        shell: bash
+
+      - name: Upload outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: outputs
+          path: out/*
